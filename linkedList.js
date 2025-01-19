@@ -7,8 +7,8 @@ export default class LinkedList {
         this.tail = tail;
     }
 
-    append(value){
-        const newNode = new Node(value);
+    append(key, value){
+        const newNode = new Node(key, value);
         if (this.head == null && this.tail == null){
             this.head = newNode;
             this.tail = newNode;
@@ -19,8 +19,8 @@ export default class LinkedList {
         }
     }
 
-    prepend(value){
-        const newNode = new Node(value);
+    prepend(key, value){
+        const newNode = new Node(key, value);
         if (this.head == null && this.tail == null){
             this.head = newNode;
             this.tail = newNode;
@@ -124,7 +124,7 @@ export default class LinkedList {
         return printString;
     }
 
-    insertAt(value, index) {
+    insertAt(key, value, index) {
         if (index < 0) {
             throw new Error("Index cannot be negative");
         }
@@ -135,16 +135,16 @@ export default class LinkedList {
         }
     
         if (index === 0) {
-            this.prepend(value);
+            this.prepend(key, value);
             return;
         }
     
         if (index === size) {
-            this.append(value);
+            this.append(key, value);
             return;
         }
     
-        const newNode = new Node(value);
+        const newNode = new Node(key, value);
         const prevNode = this.at(index - 1);
         newNode.nextNode = prevNode.nextNode;
         prevNode.nextNode = newNode;
@@ -174,6 +174,67 @@ export default class LinkedList {
             this.tail = prevNode;
         } else {
             prevNode.nextNode = prevNode.nextNode.nextNode;
+        }
+    }
+
+    findByKey(key) {
+        let currentNode = this.head;
+        while (currentNode !== null) {
+            if (currentNode.key === key) {
+                return currentNode;
+            }
+            currentNode = currentNode.nextNode;
+        }
+        return null;
+    }
+    
+    upsert(key, value) {
+        // Find existing node with this key
+        let node = this.findByKey(key);
+        if (node) {
+            // Update value if key exists
+            node.value = value;
+        } else {
+            // Append new node if key doesn't exist
+            this.append(key, value);
+        }
+    }
+
+    removeByKey(key){
+        let currentNode = this.head;
+        let prevNode = null;
+        
+        // Handle empty list
+        if (!currentNode) {
+            return;
+        }
+        
+        // Handle head node containing key
+        if (currentNode.key === key) {
+            this.head = currentNode.nextNode;
+            if (!this.head) {
+                this.tail = null;
+            }
+            return;
+        }
+        
+        // Search for node with matching key
+        while (currentNode && currentNode.key !== key) {
+            prevNode = currentNode;
+            currentNode = currentNode.nextNode;
+        }
+        
+        // Key not found
+        if (!currentNode) {
+            return;
+        }
+        
+        // Remove the node
+        prevNode.nextNode = currentNode.nextNode;
+        
+        // Update tail if we removed last node
+        if (!prevNode.nextNode) {
+            this.tail = prevNode;
         }
     }
 }

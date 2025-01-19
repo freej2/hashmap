@@ -1,10 +1,11 @@
 import LinkedList from "./linkedList.js";
 
-class hashmap {
-
-    constructor(capacity = 16, load_factor = 0){
+class HashMap {
+    constructor(capacity = 16, load_factor = 0.75) {
         this.capacity = capacity;
         this.load_factor = load_factor;
+        // Create array of buckets, each bucket will hold a LinkedList
+        this.buckets = new Array(capacity).fill(null);
     }
 
     hash(key) {
@@ -18,40 +19,53 @@ class hashmap {
         return hashCode;
       }
     
-      set(key, value){
+    set(key, value) {
+        const index = this.hash(key);
+        // If no LinkedList exists at this bucket, create one
+        if (!this.buckets[index]) {
+            this.buckets[index] = new LinkedList();
+        }
+        // Let the LinkedList handle storing/updating the key-value pair
+        this.buckets[index].upsert(key, value);
+    }
 
-      }
+    get(key) {
+        const index = this.hash(key);
+        // If no LinkedList at this bucket, key doesn't exist
+        if (!this.buckets[index]) {
+            return null;
+        }
+        // Let LinkedList find the node with this key
+        const node = this.buckets[index].findByKey(key);
+        return node ? node.value : null;
+    }
 
-      get(key){
+    has(key){
 
-      }
+    }
 
-      has(key){
+    remove(key){
 
-      }
+    }
 
-      remove(key){
+    length(){
 
-      }
+    }
 
-      length(){
+    clear(){
 
-      }
+    }
 
-      clear(){
+    keys(){
 
-      }
+    }
 
-      keys(){
+    values(){
 
-      }
+    }
 
-      values(){
+    entries(){
 
-      }
-
-      entries(){
-
-      }
+    }
       
 }
